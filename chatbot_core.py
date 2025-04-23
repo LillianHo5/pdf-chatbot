@@ -7,14 +7,14 @@ Ollama is a tool that allows us to run LLMs locally on our own computer; it offe
 
 from langchain_community.document_loaders import PyPDFLoader    # Loads and extracts text from PDF files 
 from langchain.text_splitter import CharacterTextSplitter       # Splits long text into smaller overlapping chunks  
-from langchain_community.embeddings import HuggingFaceEmbeddings          # Converts text chunks into numerical vectors (embeddings)
+from langchain_huggingface import HuggingFaceEmbeddings          # Converts text chunks into numerical vectors (embeddings)
 from langchain_community.vectorstores import FAISS                   # Stores and searches embeddings using a vector database
-from langchain_community.chat_models import ChatOllama              # Connects to a local LLM (e.g. Mistral) via Ollama
+from langchain_ollama import ChatOllama           # Connects to a local LLM (e.g. Mistral) via Ollama
 from langchain.chains import ConversationalRetrievalChain       # Combines LLM, retriever, and chat history into a smart Q&A chain
 
 def build_qa_chain(pdf_path="example.pdf"):
     loader = PyPDFLoader(pdf_path) # Loads the PDF
-    documents = loader.load()[1:]  # Skip page 1 (element 0)
+    documents = loader.load()[:]  # Skip page 1 (element 0)
 
     splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100) # Generates chunks of the document (LMs cannot handle huge text at once, e.g. a whole 50-page PDF)
     docs = splitter.split_documents(documents)

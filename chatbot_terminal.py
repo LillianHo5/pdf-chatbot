@@ -6,11 +6,20 @@ The chatbot uses a RAG pipeline that is defined in chatbot_core.py
 '''
 
 from chatbot_core import build_qa_chain # Imports the RAG pipeline builder from chatbot_core.py
+from pdf_validator import is_valid_pdf 
 
-qa_chain = build_qa_chain("example.pdf") # Builds the QA chain using a local PDF file
-chat_history = [] # Initializes an empty list to store the chat history
+print("PDF-Chatbot started! Enter ‘exit’ to quit.") # Prints the welcome message to the terminal
+file = input("Please provide a file path (e.g. /Users/lillianho/example.pdf): ")
 
-print("🧠 PDF-Chatbot started! Enter ‘exit’ to quit.") # Prints the welcome message to the terminal
+if not is_valid_pdf(file):
+    print("🚫 Invalid PDF. Please try again with a valid file.")
+    exit()
+
+# Build the RAG QA chain
+qa_chain = build_qa_chain(file)
+
+# Chat history stores (question, answer) pairs
+chat_history = []
 
 # Starts a loop to allow the user to ask questions continuously
 while True:
