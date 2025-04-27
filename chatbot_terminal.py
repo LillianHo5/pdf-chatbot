@@ -30,7 +30,7 @@ while True:
         break
 
     # Get the answer from the QA chain (LLM + Retriever) and prints the answer to the terminal
-    result = qa_chain({"question": query, "chat_history": chat_history})
+    result = qa_chain.invoke({"question": query, "chat_history": chat_history})
     print("\n💬 Answer:", result["answer"])
     chat_history.append((query, result["answer"])) # Saves the Q&A pair in the chat history
     print("\n🔍 Source – Document snippet:") # Shows a snippet from the source document that is used
