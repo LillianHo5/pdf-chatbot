@@ -1,6 +1,6 @@
 # PDF Chatbot
 
-The **PDF-Chatbot** is an AI-powered application that allows users to interact with PDF documents using natural language. It uses a Retrieval-Augmented Generation (RAG) pipeline built with [LangChain](https://www.langchain.com/) and integrates local LLMs via [Ollama](https://ollama.com/). 
+**PDF Chatbot** is an AI-powered application that allows users to interact with PDF documents using natural language. It uses a Retrieval-Augmented Generation (RAG) pipeline built with [LangChain](https://www.langchain.com/) and integrates local LLMs via [Ollama](https://ollama.com/). 
 
 This project was made for learning purposes and to get familiar with concepts such as chunking, embeddings, vector search and RAG. 
 
