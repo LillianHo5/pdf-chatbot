@@ -12,9 +12,9 @@ from langchain_community.vectorstores import FAISS                   # Stores an
 from langchain_ollama import ChatOllama           # Connects to a local LLM (e.g. Mistral) via Ollama
 from langchain.chains import ConversationalRetrievalChain       # Combines LLM, retriever, and chat history into a smart Q&A chain
 
-def build_qa_chain(pdf_path="example.pdf"):
+def build_qa_chain(pdf_path="testing-samples/example.pdf"):
     loader = PyPDFLoader(pdf_path) # Loads the PDF
-    documents = loader.load()[:]  # Skip page 1 (element 0)
+    documents = loader.load()[:]
 
     splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=100) # Generates chunks of the document (LMs cannot handle huge text at once, e.g. a whole 50-page PDF)
     docs = splitter.split_documents(documents)
