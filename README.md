@@ -47,4 +47,4 @@ pip install -r requirements.txt
 ---
 
 ## Acknowledgments
-This project was inspired by the foundational concepts outlined in the following article: "[RAG in Action: Build your Own Local PDF Chatbot as a Beginner](https://medium.com/data-science-collective/rag-in-action-build-your-own-local-pdf-chatbot-as-a-beginner-96c2833869ff)".
+This project is based on the following article: "[RAG in Action: Build your Own Local PDF Chatbot as a Beginner](https://medium.com/data-science-collective/rag-in-action-build-your-own-local-pdf-chatbot-as-a-beginner-96c2833869ff)". This project expands on the original structure with additional features and improvements.
