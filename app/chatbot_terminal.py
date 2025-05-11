@@ -5,8 +5,8 @@ The file is mainly intended for testing, debugging or if no web interface is nee
 The chatbot uses a RAG pipeline that is defined in chatbot_core.py
 '''
 
-from chatbot_core import build_qa_chain # Imports the RAG pipeline builder from chatbot_core.py
-from pdf_validator import is_valid_pdf 
+from app.chatbot_core import build_qa_chain # Imports the RAG pipeline builder from chatbot_core.py
+from app.pdf_validator import is_valid_pdf 
 
 print("PDF-Chatbot started! Enter ‘exit’ to quit.") # Prints the welcome message to the terminal
 file = input("Please provide a file path (e.g. /Users/lillianho/example.pdf): ")
