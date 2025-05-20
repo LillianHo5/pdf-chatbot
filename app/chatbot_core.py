@@ -1,6 +1,6 @@
 '''
 chatbot_core.py: This module defines the core logic of the PDFchatbot.
-It builds a RAG pipeline using LangChain and contains the central logic for PDF and model handeling. 
+It builds a RAG pipeline using LangChain and contains the central logic for PDF and model handling. 
 
 Ollama is a tool that allows us to run LLMs locally on our own computer; it offers an API that can access the LangChain directly.
 '''
@@ -10,7 +10,12 @@ from langchain.text_splitter import CharacterTextSplitter       # Splits long te
 from langchain_huggingface import HuggingFaceEmbeddings          # Converts text chunks into numerical vectors (embeddings)
 from langchain_community.vectorstores import FAISS                   # Stores and searches embeddings using a vector database
 from langchain_ollama import ChatOllama           # Connects to a local LLM (e.g. Mistral) via Ollama
-from langchain.chains import ConversationalRetrievalChain       # Combines LLM, retriever, and chat history into a smart Q&A chain
+from langchain.chains import (
+    create_history_aware_retriever,
+    create_retrieval_chain,
+)   
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 def build_qa_chain(pdf_path="testing-samples/example.pdf"):
     loader = PyPDFLoader(pdf_path) # Loads the PDF
@@ -24,10 +29,44 @@ def build_qa_chain(pdf_path="testing-samples/example.pdf"):
     retriever = db.as_retriever() # Create a retriever to find relevant chunks based on a question
 
     llm = ChatOllama(model="mistral") # Combines the retriever with mistral
-    qa_chain = ConversationalRetrievalChain.from_llm(
-        llm=llm,
-        retriever=retriever,
-        return_source_documents=True
+    
+    # Contextualize question
+    contextualize_q_system_prompt = (
+        """
+        Given a chat history and the latest user question, which may reference context in the chat history,
+        formulate a standalone question which can be understood without the chat history. Do NOT answer the
+        question, just reformualte it if needed and otherwise return it as is.
+        """
+    )
+    
+    contextualize_q_prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", contextualize_q_system_prompt),
+            MessagesPlaceholder("chat_history"),
+            ("human", "{input}"),
+        ]
+    )
+    
+    history_aware_retriever = create_history_aware_retriever(
+        llm, retriever, contextualize_q_prompt
     )
 
-    return qa_chain # The function 'qa_chain()' returns a ready-to-use question-answering chain
+    # Answer question
+    qa_system_prompt = (
+    "You are a helpful assistant for question-answering tasks. "
+    "Use the following pieces of retrieved context to answer the question. "
+    "If you don't know the answer, just say that you don't know.\n\n"
+    "{context}")
+
+    qa_prompt = ChatPromptTemplate.from_messages([
+        ("system", qa_system_prompt), 
+        MessagesPlaceholder("chat_history"), ("human", "{input}"),
+    ]) 
+    
+    question_answer_chain = create_stuff_documents_chain(llm, qa_prompt) 
+    
+    rag_chain = create_retrieval_chain(
+        history_aware_retriever, question_answer_chain
+    )
+
+    return rag_chain 

@@ -46,12 +46,13 @@ if uploaded_file is not None:
     # If a question is submitted, process 
     if question:
         with st.spinner("Processing your question..."):
-            result = qa_chain({
-                "question": question,
+            result = qa_chain.invoke({
+                "input": question,
                 "chat_history": st.session_state.chat_history
             })
 
-        st.session_state.chat_history.append((question, result["answer"]))
+        # Update chat history with latest interaction
+        st.session_state.chat_history.append((question, result["answer"] if "answer" in result else result["result"]))
 
         # Display the chat history in reverse order
         for i, (q, a) in enumerate(st.session_state.chat_history[::-1]):
