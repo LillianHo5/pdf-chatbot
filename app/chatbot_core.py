@@ -26,9 +26,9 @@ def build_qa_chain(pdf_path="testing-samples/example.pdf"):
 
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2") # Generates vector embeddings for each chunk
     db = FAISS.from_documents(docs, embeddings) # Stores the chunks in a FAISS vector db for similarity search (FAISS: Faceboon AI Similarity Search = Facebook's vector database)
-    retriever = db.as_retriever() # Create a retriever to find relevant chunks based on a question
+    retriever = db.as_retriever() 
 
-    llm = ChatOllama(model="mistral") # Combines the retriever with mistral
+    llm = ChatOllama(model="tinyllama", temperature=0) 
     
     # Contextualize question
     contextualize_q_system_prompt = (
@@ -54,9 +54,10 @@ def build_qa_chain(pdf_path="testing-samples/example.pdf"):
     # Answer question
     qa_system_prompt = (
     "You are a helpful assistant for question-answering tasks. "
-    "Use the following pieces of retrieved context to answer the question. "
-    "If you don't know the answer, just say that you don't know.\n\n"
-    "{context}")
+    "Only use information from the provided context below to answer the question. "
+    "If the context does not contain the answer, say 'I don't know' — do not make anything up.\n\n"
+    "Context:\n{context}"
+    )
 
     qa_prompt = ChatPromptTemplate.from_messages([
         ("system", qa_system_prompt), 
